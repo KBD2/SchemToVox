@@ -2,6 +2,12 @@ import gzip
 from nbt import nbt
 import json
 import sys
+import argparse
+
+parser = argparse.ArgumentParser(prog="schem2vox.py")
+parser.add_argument("-c", "--compression", type=int, choices=range(0, 11))
+parser.add_argument("filename", help="Schematic file to use")
+args = parser.parse_args()
 
 if len(sys.argv) == 1:
     input("You need to give this script a .schem file!")
@@ -9,7 +15,7 @@ if len(sys.argv) == 1:
 
 mapping = json.load(open("assets/mapping.json", "r"))
 
-decompressed = gzip.open(sys.argv[1])
+decompressed = gzip.open(args.filename)
 
 nbtfile = nbt.NBTFile(buffer=decompressed)
 
@@ -25,8 +31,22 @@ paletteMap = {}
 
 for name in idxMap.values():
     if name not in paletteMap:
-        palette.append(mapping[name])
-        paletteMap[name] = len(palette)
+        colour = mapping[name]
+        if not args.compression:
+            palette.append(colour)
+            paletteMap[name] = len(palette)
+        else:
+            foundSimilar = False
+            for idx, compare in enumerate(palette):
+                distanceSquared = (colour[0] - compare[0]) ** 2 + (colour[1] - compare[1]) ** 2 + (colour[2] - compare[2]) ** 2
+                if distanceSquared < args.compression * 400:
+                    foundSimilar = True
+                    paletteMap[name] = idx + 1
+                    palette[idx] = ((colour[0] + compare[0]) // 2, (colour[1] + compare[1]) // 2, (colour[2] + compare[2]) // 2)
+                    break
+            if not foundSimilar:
+                palette.append(colour)
+                paletteMap[name] = len(palette)
 
 if len(palette) > 256:
     print("Too many block types in schematic!")
