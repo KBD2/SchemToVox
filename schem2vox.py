@@ -74,7 +74,7 @@ for y in range(min(256, height)):
         for x in range(min(256, width)):
             block = data[x + z * width + y * width * length]
             name = idxMap[block]
-            if name == "minecraft:air":
+            if name == "minecraft:air" or name == "minecraft:cave_air" or name == "minecraft:void_air":
                 continue
             idx = paletteMap[name]
             indexes.append(bytearray((min(256, width) - x - 1, z, y, idx)))
