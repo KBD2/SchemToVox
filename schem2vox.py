@@ -3,6 +3,7 @@ from nbt import nbt
 import json
 import sys
 import argparse
+import random
 
 parser = argparse.ArgumentParser(prog="schem2vox.py")
 parser.add_argument("-c", "--compression", type=int, choices=range(0, 11))
@@ -96,6 +97,9 @@ for y in range(min(256, height)):
             name = idxMap[block]
             if name == "minecraft:air" or name == "minecraft:cave_air" or name == "minecraft:void_air":
                 continue
+            if name == "minecraft:short_grass" or name == "minecraft:tall_grass":
+                if random.random() > 0.2:
+                    continue
             idx = paletteMap[name]
             indexes.append(bytearray((min(256, width) - x - 1, z, y, idx)))
 print(f"{len(indexes)} voxels in shape")
