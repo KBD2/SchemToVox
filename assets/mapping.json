@@ -465,14 +465,14 @@
         29
     ],
     "minecraft:black_stained_glass": [
-        0,
-        0,
-        0
+        25,
+        25,
+        25
     ],
     "minecraft:black_stained_glass_pane": [
-        0,
-        0,
-        0
+        25,
+        25,
+        25
     ],
     "minecraft:black_terracotta": [
         37,
@@ -685,14 +685,14 @@
         35
     ],
     "minecraft:brown_stained_glass": [
-        0,
-        0,
-        0
+        102,
+        76,
+        51
     ],
     "minecraft:brown_stained_glass_pane": [
-        0,
-        0,
-        0
+        102,
+        76,
+        51
     ],
     "minecraft:brown_terracotta": [
         77,
@@ -1285,14 +1285,14 @@
         135
     ],
     "minecraft:cyan_stained_glass": [
-        0,
-        0,
-        0
+        76,
+        127,
+        153
     ],
     "minecraft:cyan_stained_glass_pane": [
-        0,
-        0,
-        0
+        76,
+        127,
+        153
     ],
     "minecraft:cyan_terracotta": [
         86,
@@ -1840,9 +1840,9 @@
         67
     ],
     "minecraft:frogspawn": [
-        22,
-        10,
-        0
+        110,
+        95,
+        86
     ],
     "minecraft:frosted_ice": [
         140,
@@ -1970,14 +1970,14 @@
         62
     ],
     "minecraft:gray_stained_glass": [
-        0,
-        0,
-        0
+        76,
+        76,
+        76
     ],
     "minecraft:gray_stained_glass_pane": [
-        0,
-        0,
-        0
+        76,
+        76,
+        76
     ],
     "minecraft:gray_terracotta": [
         57,
@@ -2040,14 +2040,14 @@
         31
     ],
     "minecraft:green_stained_glass": [
-        0,
-        0,
-        0
+        102,
+        127,
+        51
     ],
     "minecraft:green_stained_glass_pane": [
-        0,
-        0,
-        0
+        102,
+        127,
+        51
     ],
     "minecraft:green_terracotta": [
         76,
@@ -2405,14 +2405,14 @@
         212
     ],
     "minecraft:light_blue_stained_glass": [
-        0,
-        0,
-        0
+        102,
+        153,
+        216
     ],
     "minecraft:light_blue_stained_glass_pane": [
-        0,
-        0,
-        0
+        102,
+        153,
+        216
     ],
     "minecraft:light_blue_terracotta": [
         113,
@@ -2475,14 +2475,14 @@
         115
     ],
     "minecraft:light_gray_stained_glass": [
-        0,
-        0,
-        0
+        153,
+        153,
+        153
     ],
     "minecraft:light_gray_stained_glass_pane": [
-        0,
-        0,
-        0
+        153,
+        153,
+        153
     ],
     "minecraft:light_gray_terracotta": [
         135,
@@ -2565,14 +2565,14 @@
         23
     ],
     "minecraft:lime_stained_glass": [
-        0,
-        0,
-        0
+        127,
+        204,
+        25
     ],
     "minecraft:lime_stained_glass_pane": [
-        0,
-        0,
-        0
+        127,
+        204,
+        25
     ],
     "minecraft:lime_terracotta": [
         103,
@@ -2645,14 +2645,14 @@
         163
     ],
     "minecraft:magenta_stained_glass": [
-        0,
-        0,
-        0
+        178,
+        76,
+        216
     ],
     "minecraft:magenta_stained_glass_pane": [
-        0,
-        0,
-        0
+        178,
+        76,
+        216
     ],
     "minecraft:magenta_terracotta": [
         149,
@@ -3090,14 +3090,14 @@
         8
     ],
     "minecraft:orange_stained_glass": [
-        0,
-        0,
-        0
+        216,
+        127,
+        51
     ],
     "minecraft:orange_stained_glass_pane": [
-        0,
-        0,
-        0
+        216,
+        127,
+        51
     ],
     "minecraft:orange_terracotta": [
         161,
@@ -3230,14 +3230,14 @@
         157
     ],
     "minecraft:pink_stained_glass": [
-        0,
-        0,
-        0
+        242,
+        127,
+        165
     ],
     "minecraft:pink_stained_glass_pane": [
-        0,
-        0,
-        0
+        242,
+        127,
+        165
     ],
     "minecraft:pink_terracotta": [
         161,
@@ -3705,14 +3705,14 @@
         156
     ],
     "minecraft:purple_stained_glass": [
-        0,
-        0,
-        0
+        127,
+        63,
+        178
     ],
     "minecraft:purple_stained_glass_pane": [
-        0,
-        0,
-        0
+        127,
+        63,
+        178
     ],
     "minecraft:purple_terracotta": [
         118,
@@ -4560,9 +4560,9 @@
         78
     ],
     "minecraft:tripwire": [
-        0,
-        0,
-        0
+        129,
+        129,
+        129
     ],
     "minecraft:tripwire_hook": [
         162,
@@ -4900,14 +4900,14 @@
         221
     ],
     "minecraft:white_stained_glass": [
-        0,
-        0,
-        0
+        255,
+        255,
+        255
     ],
     "minecraft:white_stained_glass_pane": [
-        0,
-        0,
-        0
+        255,
+        255,
+        255
     ],
     "minecraft:white_terracotta": [
         209,
@@ -4990,14 +4990,14 @@
         29
     ],
     "minecraft:yellow_stained_glass": [
-        0,
-        0,
-        0
+        229,
+        229,
+        51
     ],
     "minecraft:yellow_stained_glass_pane": [
-        0,
-        0,
-        0
+        229,
+        229,
+        51
     ],
     "minecraft:yellow_terracotta": [
         186,
