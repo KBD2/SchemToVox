@@ -24,13 +24,22 @@ paletteNBT = nbtfile["Palette"]
 
 idxMap = {}
 
+print("Mapping indices...")
 for item in paletteNBT:
     idxMap[paletteNBT[item].value] = item.split("[")[0]
 
 palette = []
 paletteMap = {}
 
+complained = {}
+
+print("Creating vox palette...")
 for name in idxMap.values():
+    if name not in mapping:
+        if name in complained: continue
+        complained[name] = True
+        print("WARNING - No mapping found for " + name + " - please report this issue!")
+        continue
     if name not in paletteMap:
         colour = mapping[name]
         if not args.compression:
@@ -55,6 +64,7 @@ if len(palette) > 256:
 
 dataRaw = nbtfile["BlockData"]
 
+print("Parsing block data...")
 data = []
 idx = 0
 sum = 0
@@ -73,6 +83,25 @@ width = nbtfile["Width"].value
 length = nbtfile["Length"].value
 height = nbtfile["Height"].value
 
+print("Translating data...")
+indexes = []
+for y in range(min(256, height)):
+    for z in range(min(256, length)):
+        for x in range(min(256, width)):
+            block = data[x + z * width + y * width * length]
+            name = idxMap[block]
+            if name not in paletteMap:
+                continue
+            if name == "minecraft:air" or name == "minecraft:cave_air" or name == "minecraft:void_air":
+                continue
+            if name == "minecraft:short_grass" or name == "minecraft:tall_grass":
+                if random.random() > 0.2:
+                    continue
+            idx = paletteMap[name]
+            indexes.append(bytearray((min(256, width) - x - 1, z, y, idx)))
+print(f"{len(indexes)} voxels in shape")
+
+print("Constructing file...")
 paletteChunk = bytes("RGBA", 'utf-8')
 paletteChunk += (1024).to_bytes(4, 'little')
 paletteChunk += (0).to_bytes(4, 'little')
@@ -88,21 +117,6 @@ sizeChunk += min(256, width).to_bytes(4, "little")
 sizeChunk += min(256, length).to_bytes(4, "little")
 sizeChunk += min(256, height).to_bytes(4, "little")
 
-indexes = []
-for y in range(min(256, height)):
-    print("Processing Y layer " + str(y))
-    for z in range(min(256, length)):
-        for x in range(min(256, width)):
-            block = data[x + z * width + y * width * length]
-            name = idxMap[block]
-            if name == "minecraft:air" or name == "minecraft:cave_air" or name == "minecraft:void_air":
-                continue
-            if name == "minecraft:short_grass" or name == "minecraft:tall_grass":
-                if random.random() > 0.2:
-                    continue
-            idx = paletteMap[name]
-            indexes.append(bytearray((min(256, width) - x - 1, z, y, idx)))
-print(f"{len(indexes)} voxels in shape")
 
 indexesChunk = bytes("XYZI", 'utf-8')
 indexesChunk += (4 * len(indexes) + 4).to_bytes(4, 'little')

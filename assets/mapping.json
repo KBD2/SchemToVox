@@ -1914,6 +1914,11 @@
         103,
         85
     ],
+    "minecraft:grass": [
+        99,
+        199,
+        62
+    ],
     "minecraft:grass_block": [
         99,
         199,
@@ -4615,9 +4620,9 @@
         208
     ],
     "minecraft:vine": [
-        116,
-        116,
-        116
+        52,
+        155,
+        47
     ],
     "minecraft:void_air": [
         0,
