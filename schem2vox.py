@@ -4,6 +4,18 @@ import json
 import sys
 import argparse
 import random
+import voxhelper
+
+GLOWING_MATERIALS = (
+    "minecraft:lava",
+    "minecraft:glowstone",
+    "minecraft:shroomlight",
+    "minecraft:beacon",
+    "minecraft:fire",
+    "minecraft:sea_lantern",
+    "minecraft:torch",
+    "minecraft:lantern"
+)
 
 parser = argparse.ArgumentParser(prog="schem2vox.py")
 parser.add_argument("-c", "--compression", type=int, choices=range(0, 11))
@@ -57,6 +69,12 @@ for name in idxMap.values():
             if not foundSimilar:
                 palette.append(colour)
                 paletteMap[name] = len(palette)
+        if name == "minecraft:water":
+            voxhelper.addWater(paletteMap[name])
+        elif name.find("glass") > -1:
+            voxhelper.addGlass(paletteMap[name])
+        elif name in GLOWING_MATERIALS:
+            voxhelper.addGlowing(paletteMap[name])
 
 if len(palette) > 256:
     print("Too many block types in schematic!")
@@ -94,7 +112,7 @@ for y in range(min(256, height)):
                 continue
             if name == "minecraft:air" or name == "minecraft:cave_air" or name == "minecraft:void_air":
                 continue
-            if name == "minecraft:short_grass" or name == "minecraft:tall_grass":
+            if name == "minecraft:grass" or name == "minecraft:short_grass" or name == "minecraft:tall_grass":
                 if random.random() > 0.2:
                     continue
             idx = paletteMap[name]
@@ -102,82 +120,4 @@ for y in range(min(256, height)):
 print(f"{len(indexes)} voxels in shape")
 
 print("Constructing file...")
-paletteChunk = bytes("RGBA", 'utf-8')
-paletteChunk += (1024).to_bytes(4, 'little')
-paletteChunk += (0).to_bytes(4, 'little')
-for item in palette:
-    paletteChunk += bytearray([item[0], item[1], item[2], 255])
-for _ in range(256 - len(palette)):
-    paletteChunk += bytearray([0, 0, 0, 255])
-
-sizeChunk = bytes("SIZE", 'utf-8')
-sizeChunk += (12).to_bytes(4, 'little')
-sizeChunk += (0).to_bytes(4, 'little')
-sizeChunk += min(256, width).to_bytes(4, "little")
-sizeChunk += min(256, length).to_bytes(4, "little")
-sizeChunk += min(256, height).to_bytes(4, "little")
-
-
-indexesChunk = bytes("XYZI", 'utf-8')
-indexesChunk += (4 * len(indexes) + 4).to_bytes(4, 'little')
-indexesChunk += (0).to_bytes(4, 'little')
-indexesChunk += len(indexes).to_bytes(4, 'little')
-concatenatedIndices = bytearray()
-for index in indexes:
-    concatenatedIndices.extend(index)
-indexesChunk += concatenatedIndices
-
-transformString = f"0 0 {height // 2}"
-
-sceneGraphChunks = bytes("nTRN", 'utf-8')
-transformChunk = [
-    38 + len(transformString), 0,
-    0,
-    0, 1, -1, 0, 1,
-    1
-]
-for value in transformChunk:
-    if value < 0:
-        sceneGraphChunks += value.to_bytes(4, 'little', signed=True)
-    else:
-        sceneGraphChunks += value.to_bytes(4, 'little')
-sceneGraphChunks += (2).to_bytes(4, 'little') + bytes("_t", 'utf-8') + len(transformString).to_bytes(4, 'little') + bytes(transformString, 'utf-8')
-sceneGraphChunks += bytes("nGRP", 'utf-8')
-groupChunk = [
-    16, 0,
-    1,
-    0, 1, 2
-]
-for value in groupChunk:
-    sceneGraphChunks += value.to_bytes(4, 'little')
-sceneGraphChunks += bytes("nTRN", 'utf-8')
-transformChunk = [
-    28, 0,
-    2,
-    0, 3, -1, 0, 1, 0
-]
-for value in transformChunk:
-    if value < 0:
-        sceneGraphChunks += value.to_bytes(4, 'little', signed=True)
-    else:
-        sceneGraphChunks += value.to_bytes(4, 'little')
-sceneGraphChunks += bytes("nSHP", 'utf-8')
-shapeChunk = [
-    20, 0,
-    3,
-    0, 1, 0, 0
-]
-for value in shapeChunk:
-    sceneGraphChunks += value.to_bytes(4, 'little')
-
-mainChunk = bytes("MAIN", 'utf-8') + (0).to_bytes(4, 'little')
-mainChunk += (len(sceneGraphChunks) + len(sizeChunk) + len(indexesChunk) + len(paletteChunk)).to_bytes(4, 'little')
-mainChunk += sceneGraphChunks
-mainChunk += sizeChunk
-mainChunk += indexesChunk
-mainChunk += paletteChunk
-
-with open("out.vox", "wb") as file:
-    file.write(b'VOX ')
-    file.write((200).to_bytes(4, 'little'))
-    file.write(mainChunk)
+voxhelper.buildFile((min(256, length), min(256, width), min(256, height)), palette, indexes)
