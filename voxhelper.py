@@ -1,29 +1,55 @@
 # All integer types are little-endian
 
-MATERIALS = {}
+class Extent:
+    offsetX: int
+    offsetY: int
 
-def addWater(idx):
+    def __init__(self):
+        self.offsetX = 0
+        self.offsetY = 0
+
+class BuiltShape:
+    sizeChunk: bytearray
+    indexesChunk: bytearray
+    transformChunk: bytearray
+    shapeChunk: bytearray
+    transformId: int
+
+MATERIALS: dict[int, str] = {}
+
+SHAPES: list[BuiltShape] = []
+
+NEXT_AVAILABLE_NODE_ID = 2 # IDs 0 and 1 are for the base transform node and the group node
+
+EXTENT = Extent()
+
+def setExtent(width: int, length: int):
+    assert width <= 1998
+    assert length <= 1998
+    EXTENT.offsetX = -width // 2
+    EXTENT.offsetY = -length // 2
+
+def addWater(idx: int):
     MATERIALS[idx] = "water"
 
-def addGlass(idx):
+def addGlass(idx: int):
     MATERIALS[idx] = "glass"
 
-def addGlowing(idx):
+def addGlowing(idx: int):
     MATERIALS[idx] = "glow"
 
-def buildFile(size, palette, indexes):
-    length = size[0]
-    width = size[1]
+def addShape(indexes: list[bytearray], size: tuple, offset: tuple = (0, 0, 0)):
+    global NEXT_AVAILABLE_NODE_ID
+
+    width = size[0]
+    length = size[1]
     height = size[2]
 
-    paletteChunk = bytearray([
-        0x52, 0x47, 0x42, 0x41, # "RGBA"
-        0x0, 0x4, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0 # Size (1024, 0)
-    ])
-    for item in palette:
-        paletteChunk += bytearray([item[0], item[1], item[2], 255])
-    for _ in range(256 - len(palette)):
-        paletteChunk += bytearray([0, 0, 0, 255])
+    assert 0 < width <= 256
+    assert 0 < length <= 256
+    assert 0 < height <= 256
+
+    built = BuiltShape()
 
     sizeChunk = bytearray([
         0x53, 0x49, 0x5a, 0x45, # "SIZE"
@@ -32,7 +58,7 @@ def buildFile(size, palette, indexes):
         length & 0xff, (length >> 8), 0x0, 0x0,
         height & 0xff, (height >> 8), 0x0, 0x0
     ])
-
+    
     indexesSize = len(indexes)
     chunkSize = 4 * indexesSize + 4
     indexesChunk = bytearray([
@@ -44,13 +70,74 @@ def buildFile(size, palette, indexes):
     concatenatedIndices = bytearray()
     for index in indexes:
         concatenatedIndices.extend(index)
-    indexesChunk += concatenatedIndices
+    indexesChunk.extend(concatenatedIndices)
 
-    yDelta = f"{height // 2:03d}" # Will always be 3 characters
+    calculatedOffset = (
+        offset[0] + EXTENT.offsetX + width // 2,
+        offset[1] + EXTENT.offsetY + length // 2,
+        offset[2] + height // 2
+    )
+
+    # 4 characters gives us from -999 to 1000, we limit the extent to 1998 to ensure this
+    xString = f"{calculatedOffset[0]:04d}"
+    yString = f"{calculatedOffset[1]:04d}"
+    zString = f"{calculatedOffset[2]:04d}"
+
+    transformNodeId = NEXT_AVAILABLE_NODE_ID
+    NEXT_AVAILABLE_NODE_ID += 1
+    shapeNodeId = NEXT_AVAILABLE_NODE_ID
+    NEXT_AVAILABLE_NODE_ID += 1
+
+    shapeTransformChunk = bytearray([
+        0x6e, 0x54, 0x52, 0x4e, # "nTRN"
+        0x34, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, # Size (52, 0)
+        transformNodeId & 0xff, (transformNodeId >> 8) & 0xff, (transformNodeId >> 16) & 0xff, (transformNodeId >> 24) & 0xff, # Node ID
+        0x00, 0x00, 0x00, 0x00, # Empty attribute dict
+        shapeNodeId & 0xff, (shapeNodeId >> 8) & 0xff, (shapeNodeId >> 16) & 0xff, (shapeNodeId >> 24) & 0xff, # Child node ID
+        0xff, 0xff, 0xff, 0xff, # Reserved
+        0x00, 0x00, 0x00, 0x00, # Layer ID
+        0x01, 0x00, 0x00, 0x00, # Number of frames
+
+        0x01, 0x00, 0x00, 0x00, # Transform attribute
+        0x02, 0x00, 0x00, 0x00, # 2-byte key
+        0x5f, 0x74, # "_t"
+        0x0e, 0x00, 0x00, 0x00, # 14-byte value
+        ord(xString[0]), ord(xString[1]), ord(xString[2]), ord(xString[3]),
+        0x20,
+        ord(yString[0]), ord(yString[1]), ord(yString[2]), ord(yString[3]),
+        0x20,
+        ord(zString[0]), ord(zString[1]), ord(zString[2]), ord(zString[3])
+    ])
+
+    modelId = len(SHAPES)
+    shapeChunk = bytearray([
+        0x6e, 0x53, 0x48, 0x50, # "nSHP"
+        0x14, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, # Size (20, 0)
+        shapeNodeId & 0xff, (shapeNodeId >> 8) & 0xff, (shapeNodeId >> 16) & 0xff, (shapeNodeId >> 24) & 0xff, # Node ID
+        0x00, 0x00, 0x00, 0x00, # Empty dict
+        0x01, 0x00, 0x00, 0x00, # Number of models
+
+        modelId & 0xff, (modelId >> 8) & 0xff, (modelId >> 16) & 0xff, (modelId >> 24) & 0xff, # Model ID
+        0x00, 0x00, 0x00, 0x00 # Empty dict
+    ])
+
+    built.sizeChunk = sizeChunk
+    built.indexesChunk = indexesChunk
+    built.transformChunk = shapeTransformChunk
+    built.shapeChunk = shapeChunk
+    built.transformId = transformNodeId
+
+    SHAPES.append(built)
+
+def buildFile(palette):
+    shapesChunks = bytearray()
+    for shape in SHAPES:
+        shapesChunks.extend(shape.sizeChunk)
+        shapesChunks.extend(shape.indexesChunk)
 
     baseTransformChunk = bytearray([
         0x6e, 0x54, 0x52, 0x4e, # "nTRN"
-        0x2d, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, # Size (45, 0)
+        0x1c, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, # Size (28, 0)
         0x00, 0x00, 0x00, 0x00, # Node ID
         0x00, 0x00, 0x00, 0x00, # Empty attribute dict
         0x01, 0x00, 0x00, 0x00, # Child node ID
@@ -58,46 +145,27 @@ def buildFile(size, palette, indexes):
         0x00, 0x00, 0x00, 0x00, # Layer ID
         0x01, 0x00, 0x00, 0x00, # Number of frames
 
-        0x01, 0x00, 0x00, 0x00, # Just the transform attribute
-        0x02, 0x00, 0x00, 0x00, # 2 byte key
-        0x5f, 0x74, # "_t"
-        0x07, 0x00, 0x00, 0x00, # 7-byte value,
-        0x30, 0x20, 0x30, 0x20, ord(yDelta[0]), ord(yDelta[1]), ord(yDelta[2])  # "0 0 {yDelta}"
+        0x00, 0x00, 0x00, 0x00, # Empty attribute dict
     ])
 
+    numChildren = len(SHAPES)
+    contentSize = 12 + 4 * numChildren
     groupChunk = bytearray([
         0x6e, 0x47, 0x52, 0x50, # "nGRP"
-        0x10, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, # Size (16, 0)
+        contentSize & 0xff, (contentSize >> 8) & 0xff, (contentSize >> 16) & 0xff, (contentSize >> 24) & 0xff, # Content size
+        0x00, 0x00, 0x00, 0x00, # Child content size (0)
         0x01, 0x00, 0x00, 0x00, # Node ID
         0x00, 0x00, 0x00, 0x00, # Empty attribute dict
-        0x01, 0x00, 0x00, 0x00, # Number of children
-
-        0x02, 0x00, 0x00, 0x00 # Child ID
+        numChildren & 0xff, (numChildren >> 8) & 0xff, (numChildren >> 16) & 0xff, (numChildren >> 24) & 0xff, # Number of children
     ])
-
-    shapeTransformChunk = bytearray([
-        0x6e, 0x54, 0x52, 0x4e, # "nTRN"
-        0x1c, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, # Size (28, 0)
-        0x02, 0x00, 0x00, 0x00, # Node ID
-        0x00, 0x00, 0x00, 0x00, # Empty attribute dict
-        0x03, 0x00, 0x00, 0x00, # Child node ID
-        0xff, 0xff, 0xff, 0xff, # Reserved
-        0x00, 0x00, 0x00, 0x00, # Layer ID
-        0x01, 0x00, 0x00, 0x00, # Number of frames
-
-        0x00, 0x00, 0x00, 0x00 # Empty attribute dict
-    ])
-
-    shapeChunk = bytearray([
-        0x6e, 0x53, 0x48, 0x50, # "nSHP"
-        0x14, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, # Size (20, 0)
-        0x03, 0x00, 0x00, 0x00, # Node ID
-        0x00, 0x00, 0x00, 0x00, # Empty dict
-        0x01, 0x00, 0x00, 0x00, # Number of models
-
-        0x00, 0x00, 0x00, 0x00, # Model ID
-        0x00, 0x00, 0x00, 0x00 # Empty dict
-    ])
+    for shape in SHAPES:
+        id = shape.transformId
+        groupChunk.extend([id & 0xff, (id >> 8) & 0xff, (id >> 16) & 0xff, (id >> 24) & 0xff])
+    
+    nodeChunks = bytearray()
+    for shape in SHAPES:
+        nodeChunks.extend(shape.transformChunk)
+        nodeChunks.extend(shape.shapeChunk)
 
     materialChunks = bytearray()
     for id in MATERIALS:
@@ -155,18 +223,25 @@ def buildFile(size, palette, indexes):
             ])
         materialChunks.extend(materialChunk)
 
-    mainChunkSize = len(sizeChunk) + len(indexesChunk) + len(baseTransformChunk) + len(groupChunk) + len(shapeTransformChunk) + len(shapeChunk) + len(materialChunks) + len(paletteChunk)
+    paletteChunk = bytearray([
+        0x52, 0x47, 0x42, 0x41, # "RGBA"
+        0x0, 0x4, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0 # Size (1024, 0)
+    ])
+    for item in palette:
+        paletteChunk.extend([item[0], item[1], item[2], 255])
+    for _ in range(256 - len(palette)):
+        paletteChunk.extend([0, 0, 0, 255])
+
+    mainChunkSize = len(shapesChunks) + len(baseTransformChunk) + len(groupChunk) + len(nodeChunks) + len(materialChunks) + len(paletteChunk)
     mainChunk = bytearray([
         0x4d, 0x41, 0x49, 0x4e, # "MAIN"
         0x00, 0x00, 0x00, 0x00, # Content size (0)
         mainChunkSize & 0xff, (mainChunkSize >> 8) & 0xff, (mainChunkSize >> 16) & 0xff, (mainChunkSize >> 24) & 0xff # Child content size
     ])
-    mainChunk.extend(sizeChunk)
-    mainChunk.extend(indexesChunk)
+    mainChunk.extend(shapesChunks)
     mainChunk.extend(baseTransformChunk)
     mainChunk.extend(groupChunk)
-    mainChunk.extend(shapeTransformChunk)
-    mainChunk.extend(shapeChunk)
+    mainChunk.extend(nodeChunks)
     mainChunk.extend(materialChunks)
     mainChunk.extend(paletteChunk)
 

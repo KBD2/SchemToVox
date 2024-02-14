@@ -71,7 +71,7 @@ for name in idxMap.values():
                 paletteMap[name] = len(palette)
         if name == "minecraft:water":
             voxhelper.addWater(paletteMap[name])
-        elif name.find("glass") > -1:
+        elif name.find("glass") > -1 or name == "minecraft:ice":
             voxhelper.addGlass(paletteMap[name])
         elif name in GLOWING_MATERIALS:
             voxhelper.addGlowing(paletteMap[name])
@@ -120,4 +120,6 @@ for y in range(min(256, height)):
 print(f"{len(indexes)} voxels in shape")
 
 print("Constructing file...")
-voxhelper.buildFile((min(256, length), min(256, width), min(256, height)), palette, indexes)
+voxhelper.setExtent(width, length)
+voxhelper.addShape(indexes, (width, length, height))
+voxhelper.buildFile(palette)
