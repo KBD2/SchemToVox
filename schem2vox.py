@@ -74,21 +74,22 @@ for name in idxMap.values():
             
         if isSpecialMaterial or not args.compression:
             palette.append(colour)
-            paletteMap[name] = len(palette)
+            index = len(palette)
+            paletteMap[name] = index
 
             if isSpecialMaterial:
-                special.append(len(palette))
+                special.append(index)
 
             if name == "minecraft:water":
-                voxhelper.addWater(paletteMap[name])
+                voxhelper.addWater(index)
             elif name.find("glass") > -1 or name == "minecraft:ice":
-                voxhelper.addGlass(paletteMap[name])
+                voxhelper.addGlass(index)
             elif name in GLOWING_MATERIALS:
-                voxhelper.addGlowing(paletteMap[name])
+                voxhelper.addGlowing(index)
         else:
             foundSimilar = False
             for idx, compare in enumerate(palette):
-                if idx in special:
+                if (idx + 1) in special:
                     continue
                 distanceSquared = (colour[0] - compare[0]) ** 2 + (colour[1] - compare[1]) ** 2 + (colour[2] - compare[2]) ** 2
                 if distanceSquared < args.compression * COMPRESSION_COEFFICIENT:
