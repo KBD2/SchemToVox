@@ -24,4 +24,6 @@ I haven't tested every block's colour - some may look strange; should be an easy
 <br>
 <img src="images/village.png" width="60%">
 <br>
+<img src="images/large.png" width="60%">
+<br>
 <img src="images/nether.png" width="60%">
