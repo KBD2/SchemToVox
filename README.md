@@ -9,13 +9,19 @@ Requires the [NBT package](https://pypi.org/project/NBT/).
 Usage: `python schem2vox.py schem_file`  
 You can also drag the schematic file onto the script. 
 
-There is an optional `-c` or `-compression` argument, from 0 to 10:  
-`python schem2vox.py -c 1 example.vox` will merge similar colours - a higher value means a lower threshold for merging.
+### Parameters
+- `-c`, `--compression`, from 0 to 10:  
+Will merge similar colours - a higher value means a lower threshold for merging.  
+May be required for larger schematics.
 
-I haven't tested every block's colour - some may look strange; should be an easy fix.
+- `--cull`:  
+Will remove any invisible voxels (voxels with every face covered by an opaque voxel).  
+Significantly decreases filesize for larger schematics, though will increase processing time.  
 
 ## Examples
 
+<img src="images/norse_mythology.png" width="60%">
+<br>
 <img src="images/mansion.png" width="60%">
 <br>
 <img src="images/bastion.png" width="60%">
@@ -23,7 +29,5 @@ I haven't tested every block's colour - some may look strange; should be an easy
 <img src="images/lake.png" width="60%">
 <br>
 <img src="images/village.png" width="60%">
-<br>
-<img src="images/large.png" width="60%">
 <br>
 <img src="images/nether.png" width="60%">
