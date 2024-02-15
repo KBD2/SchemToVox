@@ -1,8 +1,8 @@
 # SchemToVox
-Converts WorldEdit `.schem` files into MagicaVoxel `.vox` models.  
+Converts WorldEdit schematic (`.schem`) files into MagicaVoxel voxel (`.vox`) models.  
 You can make schematic files by creating a selection with the wand (or `//pos1`-`//pos2`), running `//copy` and then `//schem save <schematic_filename>`.  
-The saved `.schem` file will be in your `.minecraft/config/worldedit/schematics` directory. 
-Models are capped at 256x256x256.  
+The saved `.schem` file will be in your `.minecraft/config/worldedit/schematics` directory.  
+Models are capped at 2000x2000x1000 voxels.  
 
 Requires the [NBT package](https://pypi.org/project/NBT/).
 
