@@ -56,6 +56,8 @@ paletteMap = {}
 
 complained = {}
 
+special = []
+
 print("Creating vox palette...")
 for name in idxMap.values():
     if name not in mapping:
@@ -65,12 +67,29 @@ for name in idxMap.values():
         continue
     if name not in paletteMap:
         colour = mapping[name]
-        if not args.compression:
+
+        isSpecialMaterial = False
+        if name == "minecraft:water" or name.find("glass") > -1 or name == "minecraft:ice" or name in GLOWING_MATERIALS:
+            isSpecialMaterial = True
+            
+        if isSpecialMaterial or not args.compression:
             palette.append(colour)
             paletteMap[name] = len(palette)
+
+            if isSpecialMaterial:
+                special.append(len(palette))
+
+            if name == "minecraft:water":
+                voxhelper.addWater(paletteMap[name])
+            elif name.find("glass") > -1 or name == "minecraft:ice":
+                voxhelper.addGlass(paletteMap[name])
+            elif name in GLOWING_MATERIALS:
+                voxhelper.addGlowing(paletteMap[name])
         else:
             foundSimilar = False
             for idx, compare in enumerate(palette):
+                if idx in special:
+                    continue
                 distanceSquared = (colour[0] - compare[0]) ** 2 + (colour[1] - compare[1]) ** 2 + (colour[2] - compare[2]) ** 2
                 if distanceSquared < args.compression * COMPRESSION_COEFFICIENT:
                     foundSimilar = True
@@ -80,15 +99,9 @@ for name in idxMap.values():
             if not foundSimilar:
                 palette.append(colour)
                 paletteMap[name] = len(palette)
-        if name == "minecraft:water":
-            voxhelper.addWater(paletteMap[name])
-        elif name.find("glass") > -1 or name == "minecraft:ice":
-            voxhelper.addGlass(paletteMap[name])
-        elif name in GLOWING_MATERIALS:
-            voxhelper.addGlowing(paletteMap[name])
 
 if len(palette) > 256:
-    print("Too many block types in schematic!")
+    print("Too many block types in schematic! Maybe increase the compression level?")
     quit()
 
 dataRaw = nbtfile["BlockData"]
