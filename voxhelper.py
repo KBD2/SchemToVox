@@ -24,8 +24,8 @@ NEXT_AVAILABLE_NODE_ID = 2 # IDs 0 and 1 are for the base transform node and the
 EXTENT = Extent()
 
 def setExtent(width: int, length: int):
-    assert width <= 1998
-    assert length <= 1998
+    assert 0 < width <= 2000
+    assert 0 < length <= 2000
     EXTENT.offsetX = -width // 2
     EXTENT.offsetY = -length // 2
 
@@ -78,10 +78,10 @@ def addShape(indexes: list[bytearray], size: tuple, offset: tuple = (0, 0, 0)):
         offset[2] + height // 2
     )
 
-    # 4 characters gives us from -999 to 1000, we limit the extent to 1998 to ensure this
-    xString = f"{calculatedOffset[0]:04d}"
-    yString = f"{calculatedOffset[1]:04d}"
-    zString = f"{calculatedOffset[2]:04d}"
+    # 5 characters gives us the required -1000 to 1000
+    xString = f"{calculatedOffset[0]:05d}"
+    yString = f"{calculatedOffset[1]:05d}"
+    zString = f"{calculatedOffset[2]:05d}"
 
     transformNodeId = NEXT_AVAILABLE_NODE_ID
     NEXT_AVAILABLE_NODE_ID += 1
@@ -90,7 +90,7 @@ def addShape(indexes: list[bytearray], size: tuple, offset: tuple = (0, 0, 0)):
 
     shapeTransformChunk = bytearray([
         0x6e, 0x54, 0x52, 0x4e, # "nTRN"
-        0x34, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, # Size (52, 0)
+        0x37, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, # Size (55, 0)
         transformNodeId & 0xff, (transformNodeId >> 8) & 0xff, (transformNodeId >> 16) & 0xff, (transformNodeId >> 24) & 0xff, # Node ID
         0x00, 0x00, 0x00, 0x00, # Empty attribute dict
         shapeNodeId & 0xff, (shapeNodeId >> 8) & 0xff, (shapeNodeId >> 16) & 0xff, (shapeNodeId >> 24) & 0xff, # Child node ID
@@ -101,12 +101,12 @@ def addShape(indexes: list[bytearray], size: tuple, offset: tuple = (0, 0, 0)):
         0x01, 0x00, 0x00, 0x00, # Transform attribute
         0x02, 0x00, 0x00, 0x00, # 2-byte key
         0x5f, 0x74, # "_t"
-        0x0e, 0x00, 0x00, 0x00, # 14-byte value
-        ord(xString[0]), ord(xString[1]), ord(xString[2]), ord(xString[3]),
+        0x11, 0x00, 0x00, 0x00, # 17-byte value
+        ord(xString[0]), ord(xString[1]), ord(xString[2]), ord(xString[3]), ord(xString[4]),
         0x20,
-        ord(yString[0]), ord(yString[1]), ord(yString[2]), ord(yString[3]),
+        ord(yString[0]), ord(yString[1]), ord(yString[2]), ord(yString[3]), ord(yString[4]),
         0x20,
-        ord(zString[0]), ord(zString[1]), ord(zString[2]), ord(zString[3])
+        ord(zString[0]), ord(zString[1]), ord(zString[2]), ord(zString[3]), ord(zString[4])
     ])
 
     modelId = len(SHAPES)
@@ -129,7 +129,9 @@ def addShape(indexes: list[bytearray], size: tuple, offset: tuple = (0, 0, 0)):
 
     SHAPES.append(built)
 
-def buildFile(palette):
+def buildFile(palette: list[tuple[int, int, int]]):
+    assert len(palette) <= 256
+
     shapesChunks = bytearray()
     for shape in SHAPES:
         shapesChunks.extend(shape.sizeChunk)

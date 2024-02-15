@@ -1,10 +1,20 @@
 import gzip
-from nbt import nbt
 import json
 import sys
 import argparse
 import random
+import math
+
+from nbt import nbt
+
 import voxhelper
+
+SHAPE_SIZE = 256
+MAX_WIDTH = 2000
+MAX_LENGTH = 2000
+MAX_HEIGHT = 1000
+
+COMPRESSION_COEFFICIENT = 400
 
 GLOWING_MATERIALS = (
     "minecraft:lava",
@@ -14,7 +24,8 @@ GLOWING_MATERIALS = (
     "minecraft:fire",
     "minecraft:sea_lantern",
     "minecraft:torch",
-    "minecraft:lantern"
+    "minecraft:lantern",
+    "minecraft:sea_pickle"
 )
 
 parser = argparse.ArgumentParser(prog="schem2vox.py")
@@ -61,7 +72,7 @@ for name in idxMap.values():
             foundSimilar = False
             for idx, compare in enumerate(palette):
                 distanceSquared = (colour[0] - compare[0]) ** 2 + (colour[1] - compare[1]) ** 2 + (colour[2] - compare[2]) ** 2
-                if distanceSquared < args.compression * 400:
+                if distanceSquared < args.compression * COMPRESSION_COEFFICIENT:
                     foundSimilar = True
                     paletteMap[name] = idx + 1
                     palette[idx] = ((colour[0] + compare[0]) // 2, (colour[1] + compare[1]) // 2, (colour[2] + compare[2]) // 2)
@@ -101,25 +112,51 @@ width = nbtfile["Width"].value
 length = nbtfile["Length"].value
 height = nbtfile["Height"].value
 
-print("Translating data...")
-indexes = []
-for y in range(min(256, height)):
-    for z in range(min(256, length)):
-        for x in range(min(256, width)):
-            block = data[x + z * width + y * width * length]
-            name = idxMap[block]
-            if name not in paletteMap:
-                continue
-            if name == "minecraft:air" or name == "minecraft:cave_air" or name == "minecraft:void_air":
-                continue
-            if name == "minecraft:grass" or name == "minecraft:short_grass" or name == "minecraft:tall_grass":
-                if random.random() > 0.2:
-                    continue
-            idx = paletteMap[name]
-            indexes.append(bytearray((min(256, width) - x - 1, z, y, idx)))
-print(f"{len(indexes)} voxels in shape")
-
-print("Constructing file...")
 voxhelper.setExtent(width, length)
-voxhelper.addShape(indexes, (width, length, height))
+
+numShapesX = math.ceil(min(MAX_WIDTH, width) / SHAPE_SIZE)
+numShapesY = math.ceil(min(MAX_LENGTH, length) / SHAPE_SIZE)
+numShapesZ = math.ceil(min(MAX_HEIGHT, height) / SHAPE_SIZE)
+
+numShapes = numShapesX * numShapesY * numShapesZ
+
+print("Building shapes...\n")
+numVoxels = 0
+for shapeZ in range(numShapesZ):
+    for shapeY in range(numShapesY):
+        for shapeX in range(numShapesX):
+            shapeNum = shapeX + shapeY * numShapesX + shapeZ * numShapesX * numShapesY + 1
+            print(f"\033[F{shapeNum} of {numShapes}")
+
+            offsetX = shapeX * SHAPE_SIZE
+            offsetY = shapeY * SHAPE_SIZE
+            offsetZ = shapeZ * SHAPE_SIZE
+            shapeWidth = min(SHAPE_SIZE, width - offsetX)
+            shapeLength = min(SHAPE_SIZE, length - offsetY)
+            shapeHeight = min(SHAPE_SIZE, height - offsetZ)
+
+            indexes = []
+            for z in range(shapeHeight):
+                for y in range(shapeLength):
+                    for x in range(shapeWidth):
+                        block = data[(x + offsetX) + (y + offsetY) * width + (z + offsetZ) * width * length]
+                        name = idxMap[block]
+                        if name not in paletteMap:
+                            continue
+                        if name == "minecraft:air" or name == "minecraft:cave_air" or name == "minecraft:void_air":
+                            continue
+                        if name == "minecraft:grass" or name == "minecraft:short_grass" or name == "minecraft:tall_grass":
+                            if random.random() > 0.2:
+                                continue
+                        idx = paletteMap[name]
+                        indexes.append(bytearray((x, y, z, idx)))
+                        numVoxels += 1
+
+            voxhelper.addShape(indexes, (shapeWidth, shapeLength, shapeHeight), (offsetX, offsetY, offsetZ))
+
+
+print(f"{numShapes} shapes, {numVoxels} voxels")
+
+print("Building file...")
 voxhelper.buildFile(palette)
+print("Done!")
