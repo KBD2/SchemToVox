@@ -93,7 +93,11 @@ if len(palette) > 256:
 
 dataRaw = nbtfile["BlockData"]
 
-print("Parsing block data...")
+if len(dataRaw) < 1e6:
+    print("Parsing block data...")
+else:
+    print("Parsing block data (may take a little bit)...")
+
 data = []
 idx = 0
 sum = 0
@@ -120,13 +124,13 @@ numShapesZ = math.ceil(min(MAX_HEIGHT, height) / SHAPE_SIZE)
 
 numShapes = numShapesX * numShapesY * numShapesZ
 
-print("Building shapes...\n")
+print("Building shapes...")
 numVoxels = 0
 for shapeZ in range(numShapesZ):
     for shapeY in range(numShapesY):
         for shapeX in range(numShapesX):
             shapeNum = shapeX + shapeY * numShapesX + shapeZ * numShapesX * numShapesY + 1
-            print(f"\033[F{shapeNum} of {numShapes}")
+            print(f"\033[FBuilding shapes... ({shapeNum} of {numShapes})")
 
             offsetX = shapeX * SHAPE_SIZE
             offsetY = shapeY * SHAPE_SIZE
@@ -139,7 +143,7 @@ for shapeZ in range(numShapesZ):
             for z in range(shapeHeight):
                 for y in range(shapeLength):
                     for x in range(shapeWidth):
-                        block = data[(x + offsetX) + (y + offsetY) * width + (z + offsetZ) * width * length]
+                        block = data[(min(MAX_WIDTH, width) - (x + offsetX) - 1) + (y + offsetY) * width + (z + offsetZ) * width * length]
                         name = idxMap[block]
                         if name not in paletteMap:
                             continue
