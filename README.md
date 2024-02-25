@@ -12,7 +12,7 @@ You can also drag the schematic file onto the script.
 ### Parameters
 - `-c`, `--compression`, from 0 to 10:  
 Will merge similar colours - a higher value means a lower threshold for merging.  
-May be required for larger schematics.
+May be desirable for larger or more detailed schematics.  
 
 - `-u`, `--cull`:  
 Will remove any invisible voxels (voxels with every face covered by an opaque voxel).  
@@ -21,6 +21,7 @@ Significantly decreases filesize for larger schematics, though will increase pro
 - `-t`, `--truncate`:  
 Will discard as many block types as needed to fit into the 256-colour palette.  
 Keeps the 256 most-used blocks.  
+May be required for larger or more detailed schematics.  
 
 ## Examples
 
