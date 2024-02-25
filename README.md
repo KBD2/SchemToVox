@@ -6,7 +6,7 @@ Models are capped at 2000x2000x1000 voxels.
 
 Requires the [NBT package](https://pypi.org/project/NBT/).
 
-Usage: `python schem2vox.py schem_file`  
+Usage: `python schem2vox.py <args> schem_file`  
 You can also drag the schematic file onto the script. 
 
 ### Parameters
@@ -14,9 +14,13 @@ You can also drag the schematic file onto the script.
 Will merge similar colours - a higher value means a lower threshold for merging.  
 May be required for larger schematics.
 
-- `--cull`:  
+- `-u`, `--cull`:  
 Will remove any invisible voxels (voxels with every face covered by an opaque voxel).  
 Significantly decreases filesize for larger schematics, though will increase processing time.  
+
+- `-t`, `--truncate`:  
+Will discard as many block types as needed to fit into the 256-colour palette.  
+Keeps the 256 most-used blocks.  
 
 ## Examples
 

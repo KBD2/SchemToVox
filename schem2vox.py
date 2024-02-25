@@ -46,8 +46,8 @@ def isTransparent(name: str):
 
 parser = argparse.ArgumentParser(prog="schem2vox.py")
 parser.add_argument("-c", "--compression", type=int, choices=range(0, 11), help="Compression level to use (0-10)")
-parser.add_argument("--cull", help="Cull voxels that cannot be seen", action="store_true")
-parser.add_argument("-t", "--threads", type=int, help="Number of threads to use for the shape building (default 4)")
+parser.add_argument("-u", "--cull", help="Cull voxels that cannot be seen", action="store_true")
+parser.add_argument("-t", "--truncate", help="Discards as many colours as needed to fit into the palette, from the least-used up", action="store_true")
 parser.add_argument("filename", help="Schematic file to use")
 args = parser.parse_args()
 
@@ -61,7 +61,18 @@ decompressed = gzip.open(args.filename)
 
 nbtfile = nbt.NBTFile(buffer=decompressed)
 
-paletteNBT = nbtfile["Palette"]
+if "Palette" in nbtfile:
+    # Version 1
+    schematic = nbtfile
+    paletteNBT = schematic["Palette"]
+    dataRaw = schematic["BlockData"]
+else:
+    # Version 3
+    schematic = nbtfile["Schematic"]
+    blocks = schematic["Blocks"]
+    paletteNBT = blocks["Palette"]
+    dataRaw = blocks["Data"]
+
 
 idxMap = {}
 
@@ -97,13 +108,6 @@ for name in idxMap.values():
 
             if isSpecialMaterial:
                 special.append(index)
-
-            if name == "minecraft:water":
-                voxhelper.addWater(index)
-            elif name.find("glass") > -1 or name == "minecraft:ice":
-                voxhelper.addGlass(index)
-            elif name in GLOWING_MATERIALS:
-                voxhelper.addGlowing(index)
         else:
             foundSimilar = False
             for idx, compare in enumerate(palette):
@@ -119,11 +123,9 @@ for name in idxMap.values():
                 palette.append(colour)
                 paletteMap[name] = len(palette)
 
-if len(palette) > 256:
-    print("Too many block types in schematic! Maybe increase the compression level?")
+if not args.truncate and len(palette) > 256:
+    input(f"Too many block types in schematic ({len(palette)})! Increase the compression level or specify --truncate.\n")
     quit()
-
-dataRaw = nbtfile["BlockData"]
 
 if len(dataRaw) < 1e6:
     print("Parsing block data...")
@@ -144,10 +146,50 @@ for part in dataRaw:
         numBytes += 1
 finishTime = time.time()
 print(f"Done ({finishTime - startTime:.2f}s)")
+
+ignore = set()
+if args.truncate and len(palette) > 256:
+    print("Truncating colours...")
+    startTime = time.time()
+    stats = {}
+    for index in data:
+        if index not in stats:
+            stats[index] = 1
+        else:
+            stats[index] += 1
+    statsSorted = sorted(stats.items(), key=lambda x: x[1], reverse=True)
+    newPalette = []
+    newPaletteMap = {}
+
+    for idx in range(len(statsSorted)):
+        if idx > 254:
+            ignore.add(statsSorted[idx][0])
+        else:
+            name = idxMap[statsSorted[idx][0]]
+            newPalette.append(palette[paletteMap[name] - 1])
+            newPaletteMap[name] = len(newPalette)
     
-width = nbtfile["Width"].value
-length = nbtfile["Length"].value
-height = nbtfile["Height"].value
+    palette = newPalette
+    paletteMap = newPaletteMap
+
+
+    finishTime = time.time()
+    print(f"Done ({finishTime - startTime:.2f}s)")
+elif args.truncate:
+    print("No truncation needed")
+
+print("Noting special material indices...")
+for name in paletteMap:
+    if name == "minecraft:water":
+        voxhelper.addWater(paletteMap[name])
+    elif name.find("glass") > -1 or name == "minecraft:ice":
+        voxhelper.addGlass(paletteMap[name])
+    elif name in GLOWING_MATERIALS:
+        voxhelper.addGlowing(paletteMap[name])
+    
+width = schematic["Width"].value
+length = schematic["Length"].value
+height = schematic["Height"].value
 
 voxhelper.setExtent(width, length)
 
@@ -195,6 +237,10 @@ for shapeZ in range(numShapesZ):
                 for y in range(shapeLength):
                     for x in range(shapeWidth):
                         block = data[(xOffsetWidth - x) + (y + offsetY) * width + (z + offsetZ) * width * length]
+
+                        if block in ignore: 
+                            continue
+
                         name = idxMap[block]
                         if name not in paletteMap:
                             continue
