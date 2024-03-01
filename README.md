@@ -6,23 +6,23 @@ Models are capped at 2000x2000x1000 voxels. For large schematic captures I'd rec
 
 **Requires the [NBT package](https://pypi.org/project/NBT/).**
 
-Usage: `python schem2vox.py <args> schem_file`  
+Usage: `python schem2vox.py <parameters> schem_file`  
 You can also drag the schematic file onto the script. 
 
 ### Parameters
-- `-o`, `--outfile`, filename:  
+- `-o`/`--outfile` `<filename>`:  
 Sets the name of the file to write the output to.  
 Defaults to `out.vox`.
 
-- `-c`, `--compression`, from 0 to 10:  
+- `-c`/`--compression` `<value from 0 to 10>`:  
 Will merge similar colours - a higher value means a lower threshold for merging.  
 May be desirable for larger or more detailed schematics.  
 
-- `-u`, `--cull`:  
+- `-u`/`--cull`:  
 Will remove any invisible voxels (voxels with every face covered by an opaque voxel).  
 Significantly decreases filesize for larger schematics, though will increase processing time.  
 
-- `-t`, `--truncate`:  
+- `-t`/`--truncate`:  
 Will discard as many block types as needed to fit into the 256-colour palette.  
 Keeps the 256 most-used blocks.  
 May be required for larger or more detailed schematics.  
