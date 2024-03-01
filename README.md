@@ -2,9 +2,9 @@
 Converts WorldEdit schematic (`.schem`) files into MagicaVoxel voxel (`.vox`) models.  
 You can make schematic files by creating a selection with the wand (or `//pos1`-`//pos2`), running `//copy` and then `//schem save <schematic_filename>`.  
 The saved `.schem` file will be in your `.minecraft/config/worldedit/schematics` directory.  
-Models are capped at 2000x2000x1000 voxels.  
+Models are capped at 2000x2000x1000 voxels. For large schematic captures I'd recommend a local [Paper server](https://papermc.io/) running [FastAsyncWorldEdit](https://www.spigotmc.org/resources/fastasyncworldedit.13932/).  
 
-Requires the [NBT package](https://pypi.org/project/NBT/).
+**Requires the [NBT package](https://pypi.org/project/NBT/).**
 
 Usage: `python schem2vox.py <args> schem_file`  
 You can also drag the schematic file onto the script. 
