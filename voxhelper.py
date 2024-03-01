@@ -129,7 +129,7 @@ def addShape(indexes: list[bytearray], size: tuple, offset: tuple = (0, 0, 0)):
 
     SHAPES.append(built)
 
-def buildFile(palette: list[tuple[int, int, int]]):
+def buildFile(palette: list[tuple[int, int, int]], filename: str):
     assert len(palette) <= 256
 
     shapesChunks = bytearray()
@@ -247,7 +247,7 @@ def buildFile(palette: list[tuple[int, int, int]]):
     mainChunk.extend(materialChunks)
     mainChunk.extend(paletteChunk)
 
-    with open("out.vox", "wb") as file:
+    with open(filename, "wb") as file:
         file.write(b'VOX ')
         file.write((200).to_bytes(4, 'little'))
         file.write(mainChunk)

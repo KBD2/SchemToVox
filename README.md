@@ -10,6 +10,10 @@ Usage: `python schem2vox.py <args> schem_file`
 You can also drag the schematic file onto the script. 
 
 ### Parameters
+- `-o`, `--outfile`, filename:  
+Sets the name of the file to write the output to.  
+Defaults to `out.vox`.
+
 - `-c`, `--compression`, from 0 to 10:  
 Will merge similar colours - a higher value means a lower threshold for merging.  
 May be desirable for larger or more detailed schematics.  
