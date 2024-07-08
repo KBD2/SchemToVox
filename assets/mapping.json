@@ -919,6 +919,11 @@
         144,
         88
     ],
+    "minecraft:chiseled_copper": [
+        184,
+        100,
+        73
+    ],
     "minecraft:chiseled_deepslate": [
         54,
         54,
@@ -953,6 +958,16 @@
         119,
         118,
         119
+    ],
+    "minecraft:chiseled_tuff": [
+        89,
+        94,
+        86
+    ],
+    "minecraft:chiseled_tuff_bricks": [
+        98,
+        103,
+        95
     ],
     "minecraft:chorus_flower": [
         151,
@@ -1059,10 +1074,30 @@
         107,
         79
     ],
+    "minecraft:copper_bulb": [
+        156,
+        86,
+        57
+    ],
+    "minecraft:copper_door": [
+        192,
+        109,
+        82
+    ],
+    "minecraft:copper_grate": [
+        191,
+        107,
+        79
+    ],
     "minecraft:copper_ore": [
         124,
         125,
         120
+    ],
+    "minecraft:copper_trapdoor": [
+        190,
+        106,
+        79
     ],
     "minecraft:cornflower": [
         231,
@@ -1093,6 +1128,11 @@
         118,
         117,
         118
+    ],
+    "minecraft:crafter": [
+        112,
+        98,
+        99
     ],
     "minecraft:crafting_table": [
         129,
@@ -1764,10 +1804,35 @@
         224,
         162
     ],
+    "minecraft:exposed_chiseled_copper": [
+        154,
+        119,
+        100
+    ],
     "minecraft:exposed_copper": [
         161,
         125,
         103
+    ],
+    "minecraft:exposed_copper_bulb": [
+        135,
+        107,
+        89
+    ],
+    "minecraft:exposed_copper_door": [
+        164,
+        123,
+        106
+    ],
+    "minecraft:exposed_copper_grate": [
+        161,
+        125,
+        104
+    ],
+    "minecraft:exposed_copper_trapdoor": [
+        161,
+        125,
+        104
     ],
     "minecraft:exposed_cut_copper": [
         154,
@@ -1913,16 +1978,6 @@
         149,
         103,
         85
-    ],
-    "minecraft:grass": [
-        99,
-        199,
-        62
-    ],
-    "minecraft:short_grass": [
-        99,
-        199,
-        62
     ],
     "minecraft:grass_block": [
         99,
@@ -2088,6 +2143,11 @@
         166,
         136,
         38
+    ],
+    "minecraft:heavy_core": [
+        82,
+        86,
+        94
     ],
     "minecraft:heavy_weighted_pressure_plate": [
         220,
@@ -3134,9 +3194,34 @@
         182,
         113
     ],
+    "minecraft:oxidized_chiseled_copper": [
+        83,
+        161,
+        132
+    ],
     "minecraft:oxidized_copper": [
         82,
         162,
+        132
+    ],
+    "minecraft:oxidized_copper_bulb": [
+        70,
+        132,
+        109
+    ],
+    "minecraft:oxidized_copper_door": [
+        82,
+        160,
+        132
+    ],
+    "minecraft:oxidized_copper_grate": [
+        82,
+        161,
+        131
+    ],
+    "minecraft:oxidized_copper_trapdoor": [
+        83,
+        161,
         132
     ],
     "minecraft:oxidized_cut_copper": [
@@ -3428,6 +3513,26 @@
         154,
         106,
         89
+    ],
+    "minecraft:polished_tuff": [
+        97,
+        104,
+        99
+    ],
+    "minecraft:polished_tuff_slab": [
+        97,
+        104,
+        99
+    ],
+    "minecraft:polished_tuff_stairs": [
+        97,
+        104,
+        99
+    ],
+    "minecraft:polished_tuff_wall": [
+        97,
+        104,
+        99
     ],
     "minecraft:poppy": [
         128,
@@ -4064,6 +4169,16 @@
         118,
         69
     ],
+    "minecraft:short_grass": [
+        99,
+        199,
+        62
+    ],
+    "minecraft:grass": [
+        99,
+        199,
+        62
+    ],
     "minecraft:shroomlight": [
         240,
         146,
@@ -4564,6 +4679,11 @@
         130,
         78
     ],
+    "minecraft:trial_spawner": [
+        62,
+        80,
+        92
+    ],
     "minecraft:tripwire": [
         129,
         129,
@@ -4599,6 +4719,41 @@
         109,
         102
     ],
+    "minecraft:tuff_bricks": [
+        98,
+        102,
+        95
+    ],
+    "minecraft:tuff_brick_slab": [
+        98,
+        102,
+        95
+    ],
+    "minecraft:tuff_brick_stairs": [
+        98,
+        102,
+        95
+    ],
+    "minecraft:tuff_brick_wall": [
+        98,
+        102,
+        95
+    ],
+    "minecraft:tuff_slab": [
+        108,
+        109,
+        102
+    ],
+    "minecraft:tuff_stairs": [
+        108,
+        109,
+        102
+    ],
+    "minecraft:tuff_wall": [
+        108,
+        109,
+        102
+    ],
     "minecraft:turtle_egg": [
         238,
         237,
@@ -4613,6 +4768,11 @@
         20,
         135,
         122
+    ],
+    "minecraft:vault": [
+        54,
+        69,
+        79
     ],
     "minecraft:verdant_froglight": [
         211,
@@ -4739,9 +4899,34 @@
         72,
         74
     ],
+    "minecraft:waxed_chiseled_copper": [
+        184,
+        100,
+        73
+    ],
     "minecraft:waxed_copper_block": [
         192,
         107,
+        79
+    ],
+    "minecraft:waxed_copper_bulb": [
+        156,
+        86,
+        57
+    ],
+    "minecraft:waxed_copper_door": [
+        192,
+        109,
+        82
+    ],
+    "minecraft:waxed_copper_grate": [
+        191,
+        107,
+        79
+    ],
+    "minecraft:waxed_copper_trapdoor": [
+        190,
+        106,
         79
     ],
     "minecraft:waxed_cut_copper": [
@@ -4759,10 +4944,35 @@
         106,
         80
     ],
+    "minecraft:waxed_exposed_chiseled_copper": [
+        154,
+        119,
+        100
+    ],
     "minecraft:waxed_exposed_copper": [
         161,
         125,
         103
+    ],
+    "minecraft:waxed_exposed_copper_bulb": [
+        135,
+        107,
+        89
+    ],
+    "minecraft:waxed_exposed_copper_door": [
+        164,
+        123,
+        106
+    ],
+    "minecraft:waxed_exposed_copper_grate": [
+        161,
+        125,
+        104
+    ],
+    "minecraft:waxed_exposed_copper_trapdoor": [
+        161,
+        125,
+        104
     ],
     "minecraft:waxed_exposed_cut_copper": [
         154,
@@ -4779,9 +4989,34 @@
         121,
         101
     ],
+    "minecraft:waxed_oxidized_chiseled_copper": [
+        83,
+        161,
+        132
+    ],
     "minecraft:waxed_oxidized_copper": [
         82,
         162,
+        132
+    ],
+    "minecraft:waxed_oxidized_copper_bulb": [
+        70,
+        132,
+        109
+    ],
+    "minecraft:waxed_oxidized_copper_door": [
+        82,
+        160,
+        132
+    ],
+    "minecraft:waxed_oxidized_copper_grate": [
+        82,
+        161,
+        131
+    ],
+    "minecraft:waxed_oxidized_copper_trapdoor": [
+        83,
+        161,
         132
     ],
     "minecraft:waxed_oxidized_cut_copper": [
@@ -4799,7 +5034,32 @@
         153,
         126
     ],
+    "minecraft:waxed_weathered_chiseled_copper": [
+        104,
+        150,
+        111
+    ],
     "minecraft:waxed_weathered_copper": [
+        108,
+        153,
+        110
+    ],
+    "minecraft:waxed_weathered_copper_bulb": [
+        92,
+        126,
+        99
+    ],
+    "minecraft:waxed_weathered_copper_door": [
+        110,
+        150,
+        109
+    ],
+    "minecraft:waxed_weathered_copper_grate": [
+        106,
+        152,
+        110
+    ],
+    "minecraft:waxed_weathered_copper_trapdoor": [
         108,
         153,
         110
@@ -4819,7 +5079,32 @@
         145,
         107
     ],
+    "minecraft:weathered_chiseled_copper": [
+        104,
+        150,
+        111
+    ],
     "minecraft:weathered_copper": [
+        108,
+        153,
+        110
+    ],
+    "minecraft:weathered_copper_bulb": [
+        92,
+        126,
+        99
+    ],
+    "minecraft:weathered_copper_door": [
+        110,
+        150,
+        109
+    ],
+    "minecraft:weathered_copper_grate": [
+        106,
+        152,
+        110
+    ],
+    "minecraft:weathered_copper_trapdoor": [
         108,
         153,
         110
